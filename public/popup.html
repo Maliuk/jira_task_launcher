@@ -3,16 +3,22 @@
   <head>
     <meta charset="UTF-8">
     <title>Getting Started Extension's Popup</title>
-    <style>
-      body {
-        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-        font-size: 100%;
-      }
-    </style>
     <script src="js/vendor.js"></script>
+    <link rel="stylesheet" href="popup.css">
   </head>
   <body>
-    <ul style="min-width: 700px;">
+
+  <div id="app">
+    <h3>Sonoma Task Priority Launcher</h3>
+
+    <ul id="tasks"></ul>
+
+    <a class="spl-button" id="b-run" href="#">Set new tasks</a>
+  </div>
+
+
+
+    <ul>
     <li>Current URL: <span id="url"></span></li>
     <li>Current Time: <span id="time"></span></li>
     </ul>

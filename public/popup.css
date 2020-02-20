@@ -1,0 +1,33 @@
+@import "variables.css";
+
+body {
+    font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+    font-size: 14px;
+}
+
+#app {
+    min-width: 400px;
+}
+
+h1, h2, h3, h4 {
+    text-align: center;
+}
+
+.spl-button {
+    --height: 25px;
+    display: inline-block;
+    height: var(--height);
+    line-height: var(--height);
+    padding: 0 10px;
+    text-align: center;
+    color: var(--white) !important;
+    background-color: var(--main-color);
+    border: 1px solid var(--main-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.spl-button:hover {
+    color: var(--main-color) !important;
+    background-color: transparent;
+}

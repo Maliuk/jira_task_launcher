@@ -9,33 +9,28 @@ let count = 0;
 $(function() {
 
   let pr: Priority = new Priority();
-  let tasks = pr.parseText("Priorities for 2/19/20\n" +
-      "High Priority\n" +
-      "ETR-2251 \n" +
-      "ETR-2252\n" +
-      "IP-7128\n" +
-      "IP-7129\n" +
-      "FBC-249\n" +
-      "xcel-614\n" +
-      "\n" +
-      "Medium \n" +
-      "ETR-2254\n" +
-      "ETR-2190\n" +
-      "ETR-2262\n" +
-      "FBC-393\n" +
-      "FBC-395\n" +
-      "FBC-373\n" +
-      "FBC-399\n" +
-      "FBC-398\n" +
-      "FBC-407\n" +
-      "FBC-346\n" +
-      "FBC-378\n" +
-      "FBC-382\n" +
-      "FBC-383");
+  let tasks = [];
 
-  for (const t of tasks) {
-    $("#tasks").append('<li><a href="' + t.link + '">' + t.title + '</a></li>');
-  }
+  $('#b-run').click(function (e) {
+      e.preventDefault();
+      let text = $('#text').val();
+      tasks = pr.parseText(text.toString());
+
+      for (const t of tasks) {
+        $("#tasks").append('<li><a href="' + t.link + '">' + t.title + '</a></li>');
+      }
+
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+              tasks: tasks
+            },
+            function(msg) {
+              console.log("result message:", msg);
+            });
+      });
+
+      chrome.browserAction.setBadgeText({text: tasks.length.toString()});
+  });
 
   const queryInfo = {
     active: true,
@@ -47,7 +42,8 @@ $(function() {
     $('#time').text(moment().format('YYYY-MM-DD HH:mm:ss'));
   });
 
-  chrome.browserAction.setBadgeText({text: count.toString()});
+  chrome.browserAction.setBadgeText({text: tasks.length.toString()});
+  //chrome.browserAction.setBadgeText({text: count.toString()});
   $('#countUp').click(()=>{
     chrome.browserAction.setBadgeText({text: (++count).toString()});
   });
@@ -61,5 +57,9 @@ $(function() {
         console.log("result message:", msg);
       });
     });
+  });
+
+  chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+    console.log(msg, sender);
   });
 });

@@ -3,11 +3,38 @@ enum MessageTypes {
     update
 }
 
-interface Message {
-
+interface MessageInterface {
+    getMessage();
+    setMessage();
 }
 
-export class TaskMessage implements Message {
+abstract class Message implements MessageInterface {
+    protected body : JSON;
+    protected messageType : MessageTypes;
+
     constructor() {
+    }
+
+    getMessage() : JSON {
+        return this.body;
+    }
+
+    setMessage() {
+    }
+}
+
+export class TaskMessage extends Message {
+    protected messageType = MessageTypes.tasks;
+
+    constructor() {
+        super();
+    }
+}
+
+export class UpdateMessage extends Message {
+    protected messageType = MessageTypes.update;
+
+    constructor() {
+        super();
     }
 }

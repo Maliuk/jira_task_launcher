@@ -1,16 +1,41 @@
+@import "reset.css";
 @import "variables.css";
 
 body {
     font-family: "Serif", sans-serif;
     font-size: 14px;
+    color: #333333;
 }
 
 #app {
     min-width: 400px;
+    padding: 15px 0;
+}
+
+#spl-header, #spl-footer {
+    position: relative;
+    z-index: 100;
+    overflow: hidden;
+    margin: 0;
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
 }
 
 h1, h2, h3, h4 {
     text-align: center;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+h1 {
+    font-size: 170%;
+}
+
+h2 {
+    font-size: 145%;
+}
+
+h3 {
+    font-size: 120%;
 }
 
 textarea {
@@ -36,7 +61,77 @@ textarea {
     transition: all 0.3s ease;
 }
 
-.spl-button:hover {
+.spl-button:hover, .spl-button-revert {
     color: var(--main-color) !important;
     background-color: transparent;
+}
+
+.spl-button-revert:hover {
+    color: var(--white) !important;
+    background-color: var(--main-color);
+}
+
+
+
+#tasks {
+    list-style: none;
+    margin: 0;
+    padding: 7px 15px;
+    height: 410px;
+    overflow-y: scroll;
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+#tasks li {
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+    transition: all 0.4s ease;
+    background-color: transparent;
+}
+
+#tasks li:first-child {
+    border-top: 1px solid #ccc;
+}
+
+#tasks li:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+#tasks li a {
+    text-decoration: none;
+    color: var(--main-color);
+}
+
+.task-status,
+.task-reopen {
+    display: inline-block;
+    font-size: 11px;
+    line-height: 15px;
+    height: 15px;
+    padding: 0 10px;
+    margin-left: 5px;
+    border-radius: 4px;
+    color: #fff;
+    background-color: var(--main-color);
+    float: right;
+}
+
+.task-status.in-dev,
+.task-status.open {
+    background-color: var(--green);
+}
+
+.task-reopen {
+    background-color: var(--orange);
+}
+
+.spl-error {
+    background-color: var(--red);
+}
+
+
+#spl-footer {
+    text-align: center;
+    padding: 15px 15px 0;
+    box-shadow: 0 -4px 5px rgba(0, 0, 0, 0.15);
 }

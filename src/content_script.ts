@@ -40,7 +40,7 @@ fetch(chrome.extension.getURL('content.html'))
             chrome.runtime.sendMessage({test: "test"});
         });
     }).catch(err => {
-    alert("error");
+    console.log("error");
 });
 
 /*let links = document.querySelectorAll('a');

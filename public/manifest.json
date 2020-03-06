@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
 
-  "name": "Chrome Extension TypeScript Starter",
-  "description": "Chrome Extension, TypeScript, Visual Studio Code",
-  "version": "1.0",
+  "name": "Sonoma Task Priority Launcher",
+  "description": "Sonoma Task Priority Launcher",
+  "version": "0.1",
 
   "options_ui": {
     "page": "options.html",
@@ -19,7 +19,7 @@
       {
         "matches": ["*://*.atlassian.nett/*"],
         "js": ["js/vendor.js", "js/content_script.js"],
-        "css": ["variables.css", "popup.css", "content.css"]
+        "css": ["styles/variables.css", "styles/popup.css", "styles/content.css"]
       }
   ],
 
@@ -33,9 +33,9 @@
   ],
   "web_accessible_resources": [
     "js/vendor.js",
-    "content.css",
-    "variables.css",
-    "popup.css",
+    "styles/content.css",
+    "styles/variables.css",
+    "styles/popup.css",
     "content.html"
   ]
 }

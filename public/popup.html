@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Getting Started Extension's Popup</title>
     <script src="js/vendor.js"></script>
-    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="styles/popup.css">
 </head>
 <body>
 
@@ -18,8 +18,10 @@
     <textarea id="text"></textarea>
 
     <div id="spl-footer">
-        <a class="spl-button" id="b-run" href="#">Set new tasks</a>
+        <a class="spl-button" id="b-run" href="#">Run</a>
+        <a class="spl-button hidden" id="b-new-tasks" href="#">Set new tasks</a>
         <a class="spl-button spl-button-revert" id="b-update" href="#">Update</a>
+        <a class="spl-button b-red" id="b-clear" href="#">Clear</a>
     </div>
 </div>
 

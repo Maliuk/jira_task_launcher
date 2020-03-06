@@ -1,5 +1,5 @@
-@import "reset.css";
-@import "variables.css";
+@import "./reset.css";
+@import "./variables.css";
 
 body {
     font-family: "Serif", sans-serif;
@@ -71,6 +71,15 @@ textarea {
     background-color: var(--main-color);
 }
 
+.spl-button.b-red {
+    color: var(--white) !important;
+    background-color: var(--red);
+    border-color: var(--red);
+}
+.spl-button.b-red:hover {
+    color: var(--red) !important;
+    background-color: transparent;
+}
 
 
 #tasks {
@@ -87,6 +96,7 @@ textarea {
     border-bottom: 1px solid #ccc;
     transition: all 0.4s ease;
     background-color: transparent;
+    cursor: pointer;
 }
 
 #tasks li:first-child {
@@ -116,16 +126,16 @@ textarea {
     float: right;
 }
 
-.task-status.in-dev,
-.task-status.open {
+.task-status.in-dev {
     background-color: var(--green);
 }
 
-.task-reopen {
+.task-status.open,
+.task-status.reopened {
     background-color: var(--orange);
 }
 
-.spl-error {
+.task-status.error {
     background-color: var(--red);
 }
 

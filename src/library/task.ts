@@ -1,8 +1,15 @@
+enum TaskPriority {
+    LOW,
+    MEDIUM,
+    HIGH
+}
+
 export class Task {
-    private _title : string;
-    private _link : string;
-    private status : string;
-    private _isMine : boolean = false;
+    private _title: string;
+    private _link: string;
+    public status: string;
+    public isMine: boolean = false;
+    public priority: TaskPriority;
 
     constructor(title: string = "") {
         this.title = title;
@@ -10,22 +17,25 @@ export class Task {
     }
 
     set title(title: string) {
-        this._title = title;
+        if (/\w+-\d+/gmi.test(title))
+            this._title = title.toUpperCase();
+        else
+            throw new Error("Not valid Task title");
     }
 
-    get title() : string {
+    get title(): string {
         return this._title;
     }
 
-    set link(link : string) {
+    set link(link: string) {
         this._link = link;
     }
 
-    get link() : string {
+    get link(): string {
         return this._link;
     }
 
-    private generateLink() : void {
+    private generateLink(): void {
         this.link = "https://planetecosystems.atlassian.net/browse/" + this.title;
     }
 }

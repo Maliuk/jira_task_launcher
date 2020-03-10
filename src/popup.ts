@@ -69,13 +69,6 @@ $(function() {
         }
     });
 
-
-    chrome.contextMenus.create({"title": "Add to my tasks"}, function() {
-        if (chrome.extension.lastError) {
-            console.log("Got expected error: " + chrome.extension.lastError.message);
-        }
-    });
-
     const queryInfo = {
         active: true,
         currentWindow: true

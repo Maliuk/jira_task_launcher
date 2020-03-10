@@ -46,7 +46,10 @@ export class Task {
         let html = await response.text();
 
         let doc = new DOMParser().parseFromString(html, 'text/html');
-        let status = doc.querySelector('#status-val span').innerHTML;
+        let status: string = "";
+
+        if (doc.querySelector('#status-val span'))
+            status = doc.querySelector('#status-val span').innerHTML;
 
         if (!response.ok) {
             this.status = "error";

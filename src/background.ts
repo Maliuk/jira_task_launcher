@@ -20,6 +20,7 @@ class App {
     }
 
     public run() {
+        // TODO: Create factory by tasks select
         this.priority = this.factory.create(factory.flag.PRIORITY);
 
         chrome.runtime.onMessage.addListener((msg: MessageInterface, sender, sendResponse) => {
@@ -90,14 +91,13 @@ class App {
 let app = App.getInstance();
 app.run();
 
-
-
-function polling() {
+/*function polling() {
     console.log('polling');
     setTimeout(polling, 1000 * 30);
 }
 
-polling();
+polling();*/
+
 
 chrome.runtime.getPackageDirectoryEntry(function(root) {
     root.getFile("content.html", {}, function(fileEntry) {
@@ -110,10 +110,6 @@ chrome.runtime.getPackageDirectoryEntry(function(root) {
             reader.readAsText(file);
         }, function () {});
     }, function () {});
-});
-
-chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-    //console.log(msg, sender);
 });
 
 /*

@@ -1,48 +1,107 @@
 import { Task } from "./task";
 
-export class Priority {
-    public text: string | Object;
-    private tasks: Task[] = [];
+export interface PriorityInterface {
+    getTasks(): Task[];
+    addTask(title: string): boolean
+    getTask(title: string): Task;
+    clear(): void;
+    removeStatuses(): void;
+    addToMine(title: string, isMine?: boolean): Task;
+}
+
+abstract class Tasks implements PriorityInterface {
+    protected tasks: Task[] = [];
+    protected isMine: boolean = false;
+    protected isPriority: boolean = false;
 
     constructor() {
     }
 
-    setTasks(text: string | Object): Task[] {
-        this.clear();
+    public getTasks(): Task[] {
+        return this.tasks.filter(this.filter);
+    }
 
-        this.text = text;
+    public addTask(title: string): boolean {
+        try {
+            if (!this.getTask(title)) {
+                let t = new Task(title);
+                t.isMine = this.isMine;
+                t.isPriority = this.isPriority;
 
-        let regexp = /\w+-\d+/gmi;
-        let found = this.text.toString().match(regexp);
+                this.tasks.push(t);
+                this.sort();
 
-        for (const f of found) {
-            let t = new Task(f.toString());
-            this.tasks.push(t);
+                return true;
+            }
         }
-
-        this.tasks.sort((a, b) => (a.title > b.title) ? 1 : -1);
-
-        return this.tasks;
+        catch (e) {
+            return false;
+        }
     }
 
-    getTasks(): Task[] {
-        return this.tasks;
-    }
-
-    addTask(title: string | Object) {
-
-    }
-
-    getTask(title: string): Task {
+    public getTask(title: string): Task {
         for (const task of this.tasks) {
             if (task.title == title) {
                 return task;
             }
         }
-        return new Task(title);
+        new Task(title);
     }
 
-    clear(): void {
+    public sort() {
+        this.tasks.sort((a, b) => (a.title > b.title) ? 1 : -1);
+    }
+
+    public clear(): void {
         this.tasks.length = 0;
+    }
+
+    protected filter(element: Task, index: number, array: Task[]): boolean {
+        return true;
+    }
+
+    public removeStatuses(): void {
+        for (const task of this.tasks)
+            delete task.status;
+    }
+
+    public addToMine(title: string, isMine: boolean = true): Task {
+        let task = this.getTask(title);
+        task.isMine = isMine;
+        return task;
+    }
+}
+
+export class Priority extends Tasks {
+    protected isMine: boolean = false;
+    protected isPriority: boolean = true;
+
+    public clear(): void {
+        this.tasks = this.tasks.filter(obj => {
+            return obj.isMine == true;
+        });
+        for (const task of this.tasks)
+            task.isPriority = false;
+    }
+
+    protected filter(element: Task, index: number, array: Task[]): boolean {
+        return element.isPriority == true;
+    }
+}
+
+export class MyTasks extends Tasks {
+    protected isMine: boolean = true;
+    protected isPriority: boolean = false;
+
+    public clear(): void {
+        this.tasks = this.tasks.filter(obj => {
+            return obj.isPriority == true;
+        });
+        for (const task of this.tasks)
+            task.isMine = false;
+    }
+
+    protected filter(element: Task, index: number, array: Task[]): boolean {
+        return element.isMine == true;
     }
 }

@@ -54,7 +54,7 @@ textarea {
     line-height: var(--height);
     padding: 0 10px;
     text-align: center;
-    color: var(--white) !important;
+    color: var(--white);
     background-color: var(--main-color);
     border: 1px solid var(--main-color);
     text-decoration: none !important;
@@ -62,22 +62,32 @@ textarea {
 }
 
 .spl-button:hover, .spl-button-revert {
-    color: var(--main-color) !important;
+    color: var(--main-color);
     background-color: transparent;
 }
 
 .spl-button-revert:hover {
-    color: var(--white) !important;
+    color: var(--white);
     background-color: var(--main-color);
 }
 
 .spl-button.b-red {
-    color: var(--white) !important;
+    color: var(--white);
     background-color: var(--red);
     border-color: var(--red);
 }
 .spl-button.b-red:hover {
-    color: var(--red) !important;
+    color: var(--red);
+    background-color: transparent;
+}
+
+.spl-button.b-green {
+    color: var(--white);
+    background-color: var(--green);
+    border-color: var(--green);
+}
+.spl-button.b-green:hover {
+    color: var(--green);
     background-color: transparent;
 }
 
@@ -96,7 +106,6 @@ textarea {
     border-bottom: 1px solid #ccc;
     transition: all 0.4s ease;
     background-color: transparent;
-    cursor: pointer;
 }
 
 #tasks li:first-child {
@@ -105,6 +114,10 @@ textarea {
 
 #tasks li:hover {
     background-color: rgba(0, 0, 0, 0.05);
+}
+
+#tasks li input[type="checkbox"] {
+    margin-right: 5px;
 }
 
 #tasks li a {

@@ -24,12 +24,14 @@
   ],
 
   "background": {
-    "scripts": ["js/vendor.js", "js/background.js"]
+    "scripts": ["js/vendor.js", "js/background.js"],
+    "persistent": true
   },
 
   "permissions": [
     "storage",
-    "<all_urls>"
+    "<all_urls>",
+    "contextMenus"
   ],
   "web_accessible_resources": [
     "js/vendor.js",

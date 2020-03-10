@@ -1,15 +1,18 @@
-import { Priority } from "./library/priority";
-import { Message, MessageInterface } from "./library/message";
-import { Task } from "./library/task";
+import {PriorityInterface} from "./library/priority";
+import {Message, MessageInterface} from "./library/message";
+import {Task} from "./library/task";
+import * as factory from "./library/factory";
 
 /* App class Singleton */
 class App {
-    private static instance : App;
-    private priority : Priority = new Priority();
+    private static instance: App;
+    private factory: factory.TaskFactory = new factory.TaskFactory();
+    private priority: PriorityInterface;
+    private text: string;
 
     private constructor() {}
 
-    public static getInstance() : App {
+    public static getInstance(): App {
         if (!App.instance) {
             App.instance = new App();
         }
@@ -17,16 +20,26 @@ class App {
     }
 
     public run() {
+        this.priority = this.factory.create(factory.flag.PRIORITY);
+
         chrome.runtime.onMessage.addListener((msg: MessageInterface, sender, sendResponse) => {
             let response = this[msg.action + "Message"](msg, sender, sendResponse);
             sendResponse(response);
+        });
+
+
+        chrome.runtime.onConnect.addListener(port => {
+            console.log("popup opened");
+            port.onDisconnect.addListener(() => {
+                console.log("popup closed");
+            });
         });
 
         /*chrome.storage.sync.set({priority: this.priority}, () => {
             console.log(this.priority);
         });*/
 
-        /*chrome.storage.sync.get(['priority'], function(result) {
+        /*chrome.storage.sync.get(['priority'], result => {
             console.log(result.priority);
         });*/
     }
@@ -37,7 +50,20 @@ class App {
     }
 
     private setTasksMessage(msg: MessageInterface, sender, sendResponse): MessageInterface {
-        return new Message("", this.priority.setTasks(msg.body));
+        this.priority.clear();
+
+        this.text = msg.body;
+        let found = this.text.match(/[A-Za-z]+-[0-9]+/gmi);
+
+        for (const f of found) {
+            this.priority.addTask(f.toString());
+        }
+
+        return new Message("", this.priority.getTasks());
+    }
+
+    private addTaskMessage(msg: MessageInterface, sender, sendResponse): MessageInterface {
+        return new Message("", this.priority.addTask(msg.body));
     }
 
     private clearTasksMessage(msg: MessageInterface, sender, sendResponse): MessageInterface {
@@ -51,7 +77,12 @@ class App {
     }
 
     private updateTasksMessage(msg: MessageInterface, sender, sendResponse): MessageInterface {
-        return new Message("", this.priority.setTasks(this.priority.text));
+        this.priority.removeStatuses();
+        return new Message("", this.priority.getTasks());
+    }
+
+    private addToMineTasksMessage(msg: MessageInterface, sender, sendResponse): MessageInterface {
+        return new Message("", this.priority.addToMine(msg.body.title, msg.body.isMine));
     }
 }
 
@@ -83,3 +114,16 @@ chrome.runtime.getPackageDirectoryEntry(function(root) {
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     //console.log(msg, sender);
 });
+
+/*
+(<any>chrome).app.runtime.onLaunched.addListener(function() {
+    (<any>chrome).app.window.create('public/index.html', {
+        innerBounds: {
+            width: 800,
+            height: 600,
+            minWidth: 200,
+            minHeight: 200,
+        }
+    });
+});
+*/

@@ -4,6 +4,7 @@ import { Priority } from "./library/priority";
 import { Task } from "./library/task";
 import { Message, MessageInterface } from "./library/message";
 
+let port = chrome.runtime.connect();
 let count = 0;
 
 $(function() {
@@ -21,25 +22,25 @@ $(function() {
     });
 
 
-  $('#b-run, #b-update').click(function (e) {
-      e.preventDefault();
+    $('#b-run, #b-update').click(function (e) {
+        e.preventDefault();
 
-      $('#tasks').hide().html('');
+        $('#tasks').hide().html('');
 
-      let text = $('#text').val();
+        let text = $('#text').val();
 
-      chrome.runtime.sendMessage(new Message($(this).attr("id") == "b-run" ? "setTasks" : "updateTasks", text), function (msg: MessageInterface) {
+        chrome.runtime.sendMessage(new Message($(this).attr("id") == "b-run" ? "setTasks" : "updateTasks", text), function (msg: MessageInterface) {
           tasks = msg.body;
 
           if (tasks.length > 0) {
               setTasks(tasks);
           }
-      });
+        });
 
-      chrome.storage.sync.set({priority: tasks}, () => {
+        chrome.storage.sync.set({priority: tasks}, () => {
           //console.log(this.priority);
-      });
-  });
+        });
+    });
 
     $('#b-new-tasks').click(function (e) {
         e.preventDefault();
@@ -52,36 +53,59 @@ $(function() {
         $('#b-run').removeClass('hidden');
     });
 
-  const queryInfo = {
-    active: true,
-    currentWindow: true
-  };
+    $("#b-add").click(function (e) {
+        e.preventDefault();
+        let taskName = prompt("Enter task name", "");
 
-  chrome.tabs.query(queryInfo, function(tabs) {
-    $('#url').text(tabs[0].url);
-    $('#time').text(moment().format('YYYY-MM-DD HH:mm:ss'));
-  });
-
-  chrome.browserAction.setBadgeText({text: tasks.length.toString()});
-  //chrome.browserAction.setBadgeText({text: count.toString()});
-  $('#countUp').click(()=>{
-    chrome.browserAction.setBadgeText({text: (++count).toString()});
-  });
-
-  $('#changeBackground').click(()=>{
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, {
-        color: '#555555'
-      },
-      function(msg) {
-        console.log("result message:", msg);
-      });
+        if (taskName) {
+            chrome.runtime.sendMessage(new Message("addTask", taskName), function (msg: MessageInterface) {
+                if (!msg.body) {
+                    alert("Enter valid task name");
+                }
+                else {
+                    window.location.reload();
+                }
+            });
+        }
     });
-  });
 
-  chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-    console.log(msg, sender);
-  });
+
+    chrome.contextMenus.create({"title": "Add to my tasks"}, function() {
+        if (chrome.extension.lastError) {
+            console.log("Got expected error: " + chrome.extension.lastError.message);
+        }
+    });
+
+    const queryInfo = {
+        active: true,
+        currentWindow: true
+    };
+
+    chrome.tabs.query(queryInfo, function(tabs) {
+        $('#url').text(tabs[0].url);
+        $('#time').text(moment().format('YYYY-MM-DD HH:mm:ss'));
+    });
+
+    chrome.browserAction.setBadgeText({text: tasks.length.toString()});
+    //chrome.browserAction.setBadgeText({text: count.toString()});
+    $('#countUp').click(()=>{
+        chrome.browserAction.setBadgeText({text: (++count).toString()});
+    });
+
+    $('#changeBackground').click(()=>{
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          chrome.tabs.sendMessage(tabs[0].id, {
+            color: '#555555'
+          },
+          function(msg) {
+            console.log("result message:", msg);
+          });
+        });
+    });
+
+    chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+        console.log(msg, sender);
+    });
 });
 
 function setTasks(tasks) {
@@ -89,7 +113,7 @@ function setTasks(tasks) {
     $('#text').hide();
 
     for (const t of tasks) {
-        $("#tasks").append('<li id="' + t._title + '"><a href="' + t._link + '">' + t._title + '</a> <span class="task-status"><img class="spl-loading" src="./loading.gif" alt="loader" height="8px" width="8px" /></span></li>');
+        $("#tasks").append('<li id="' + t._title + '"><input type="checkbox" name="' + t._title + '" ' + (t.isMine ? "checked" : "") + ' /><a href="' + t._link + '">' + t._title + '</a> <span class="task-status"><img class="spl-loading" src="./loading.gif" alt="loader" height="8px" width="8px" /></span></li>');
 
         if (t.status) {
             let status = t.status;
@@ -113,13 +137,20 @@ function setTasks(tasks) {
         }
     }
 
-    $('#tasks li').click(function (e) {
+    $('#tasks li a').click(function (e) {
         e.preventDefault();
         let link = $('a', this).attr('href');
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             let tab = tabs[0];
             chrome.tabs.update(tab.id, {url: link});
         });
+    });
+
+    $('#tasks li input[type="checkbox"]').on("change", function () {
+        chrome.runtime.sendMessage(new Message("addToMineTasks", {
+            title: $(this).parents("li").attr("id"),
+            isMine: $(this).is(":checked")
+        }));
     });
 
     chrome.browserAction.setBadgeText({text: tasks.length.toString()});

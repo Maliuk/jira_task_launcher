@@ -9,6 +9,7 @@ export class Task {
     private _link: string;
     public status: string;
     public isMine: boolean = false;
+    public isPriority: boolean = false;
     public priority: TaskPriority;
 
     constructor(title: string = "") {
@@ -17,7 +18,7 @@ export class Task {
     }
 
     set title(title: string) {
-        if (/\w+-\d+/gmi.test(title))
+        if (/^[A-Za-z]+-[0-9]+$/gmi.test(title))
             this._title = title.toUpperCase();
         else
             throw new Error("Not valid Task title");

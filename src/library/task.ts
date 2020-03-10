@@ -39,4 +39,25 @@ export class Task {
     private generateLink(): void {
         this.link = "https://planetecosystems.atlassian.net/browse/" + this.title;
     }
+
+    // TODO: finish this
+    public async updateStatus(): Promise<string> {
+        let response = await fetch(this.link);
+        let html = await response.text();
+
+        let doc = new DOMParser().parseFromString(html, 'text/html');
+        let status = doc.querySelector('#status-val span').innerHTML;
+
+        if (!response.ok) {
+            this.status = "error";
+        }
+        else if (doc.querySelector('.people-details dt[title="Original Developer"]') && status.indexOf("Open") > -1) {
+            this.status = "Reopened";
+        }
+        else {
+            this.status = status;
+        }
+
+        return this.status;
+    }
 }

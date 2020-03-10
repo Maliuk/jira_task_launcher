@@ -27,7 +27,7 @@ class App {
             sendResponse(response);
         });
 
-
+        // TODO: test listener on popup opened/closed
         chrome.runtime.onConnect.addListener(port => {
             console.log("popup opened");
             port.onDisconnect.addListener(() => {
@@ -70,9 +70,10 @@ class App {
         return new Message("", this.priority.clear());
     }
 
-    private setTaskStatusMessage(msg: MessageInterface, sender, sendResponse): MessageInterface {
-        let task: Task = this.priority.getTask(msg.body.title);
-        task.status = msg.body.status;
+    private updateTaskStatusMessage(msg: MessageInterface, sender, sendResponse): MessageInterface {
+        let status = this.priority.updateTaskStatus(msg.body.title).then((status) => {
+            chrome.runtime.sendMessage(new Message("taskStatusUpdated", {title: msg.body.title, status: status}));
+        });
         return new Message("");
     }
 

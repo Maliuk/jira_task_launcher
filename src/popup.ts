@@ -102,11 +102,17 @@ $(function() {
           });
         });
     });
-
-    chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-        console.log(msg, sender);
-    });
 });
+
+chrome.runtime.onMessage.addListener((msg: MessageInterface, sender, sendResponse) => {
+    if (msg.action == "taskStatusUpdated") {
+        setTaskStatus(msg.body.title, msg.body.status);
+    }
+});
+
+function setTaskStatus(title: string, status: string) {
+    $('.task-status', $('#' + title)).text(status).addClass(status.toLowerCase().replace(/ /g, '-'));
+}
 
 function setTasks(tasks) {
 
@@ -116,30 +122,16 @@ function setTasks(tasks) {
         $("#tasks").append('<li id="' + t._title + '"><input type="checkbox" name="' + t._title + '" ' + (t.isMine ? "checked" : "") + ' /><a href="' + t._link + '">' + t._title + '</a> <span class="task-status"><img class="spl-loading" src="./loading.gif" alt="loader" height="8px" width="8px" /></span></li>');
 
         if (t.status) {
-            let status = t.status;
-            $('.task-status', $('#' + t._title)).text(status).addClass(status.toLowerCase().replace(/ /g, '-'));
+            setTaskStatus(t._title, t.status);
         }
         else {
-            $.get( t._link, function( data ) {
-                let status = $('#status-val span', data).text();
-                if ($('.people-details dt[title="Original Developer"]', data).length > 0 && status.indexOf("Open") > -1) {
-                    status = "Reopened";
-                }
-
-                $('.task-status', $('#' + t._title)).text(status).addClass(status.toLowerCase().replace(/ /g, '-'));
-
-                chrome.runtime.sendMessage(new Message("setTaskStatus", {title: t._title, status: status}));
-
-            }).fail(function() {
-                $('.task-status', $('#' + t._title)).text("Error").addClass("error");
-                chrome.runtime.sendMessage(new Message("setTaskStatus", {title: t._title, status: "Error"}));
-            });
+            chrome.runtime.sendMessage(new Message("updateTaskStatus", {title: t._title}));
         }
     }
 
     $('#tasks li a').click(function (e) {
         e.preventDefault();
-        let link = $('a', this).attr('href');
+        let link = $(this).attr('href');
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             let tab = tabs[0];
             chrome.tabs.update(tab.id, {url: link});

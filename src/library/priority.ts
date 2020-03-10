@@ -7,6 +7,7 @@ export interface PriorityInterface {
     clear(): void;
     removeStatuses(): void;
     addToMine(title: string, isMine?: boolean): Task;
+    updateTaskStatus(title: string): Promise<any>;
 }
 
 abstract class Tasks implements PriorityInterface {
@@ -69,6 +70,12 @@ abstract class Tasks implements PriorityInterface {
         let task = this.getTask(title);
         task.isMine = isMine;
         return task;
+    }
+
+    async updateTaskStatus(title: string): Promise<string> {
+        let task = this.getTask(title);
+        await task.updateStatus();
+        return task.status;
     }
 }
 

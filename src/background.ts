@@ -54,7 +54,7 @@ class App {
         this.priority.clear();
 
         this.text = msg.body;
-        let found = this.text.match(/[A-Za-z]+-[0-9]+/gmi);
+        let found = this.text.match(/[A-Za-z]+-\d+/gmi);
 
         for (const f of found) {
             this.priority.addTask(f.toString());

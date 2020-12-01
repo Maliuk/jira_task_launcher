@@ -18,7 +18,7 @@ export class Task {
     }
 
     set title(title: string) {
-        if (/^[A-Za-z]+-[0-9]+$/gmi.test(title))
+        if (/^[A-Za-z]+-\d+$/gmi.test(title))
             this._title = title.toUpperCase();
         else
             throw new Error("Not valid Task title");
